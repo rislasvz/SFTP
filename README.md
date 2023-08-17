@@ -1,35 +1,21 @@
-# SFTP
-
-
-
 @echo off
-set "CarpetaParaComprimir=C:\Users\risla\Desktop\web"
-set "RutaDestino=C:\Users\risla\Documents\compresor"
+setlocal enabledelayedexpansion
 
-for /f "tokens=1-3 delims=/ " %%a in ('date /t') do (
-    set "day=%%a"
-    set "month=%%b"
-    set "year=%%c"
+for /f "delims=" %%a in ('wmic os get localdatetime ^| find "."') do (
+    set datetime=%%a
 )
 
-rem Formatear año a yy (dos últimos dígitos)
-set "year=%year:~-2%"
+REM Extraer los componentes de la fecha y la hora
+set "year=!datetime:~0,4!"
+set "month=!datetime:~4,2!"
+set "day=!datetime:~6,2!"
+set "hour=!datetime:~8,2!"
+set "minute=!datetime:~10,2!"
+set "second=!datetime:~12,2!"
 
-set "nombreApp=app%day%%month%%year%"
-echo Nombre de la aplicación: %nombreApp%
+REM Formar la fecha en formato ddmmyy
+set "formatted_date=!day!!month!!year:~-2!"
 
-set "NombreArchivo=app%day%%month%%year%.zip"
-
-echo Comprimiendo la carpeta...
-powershell.exe -command "Compress-Archive -Path '%CarpetaParaComprimir%' -DestinationPath ('%RutaDestino%\%NombreArchivo%')"
-
-echo Carpeta comprimida exitosamente en la ubicación '%RutaDestino%\%NombreArchivo%'.
-
-rem Eliminar archivos en el directorio de origen
-echo Limpiando el directorio de origen...
-del /q "%CarpetaParaComprimir%\*.*"
-
-echo Directorio de origen limpiado exitosamente.
-
+echo Fecha en formato ddmmyy: !formatted_date!
 
 pause
